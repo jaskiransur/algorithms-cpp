@@ -1,6 +1,3 @@
-// Algorithms.cpp : Defines the exported functions for the DLL application.
-//
+#include "graph.hpp"
 
-#include "stdafx.h"
-
-
+jas::algo::Graph<char> CharGraph(3);
