@@ -1,29 +1,25 @@
 #include "gtest/gtest.h"
 #include "..\Algorithms\graph.hpp"
 
-//TEST(TestCaseName, TestName) {
-//  EXPECT_EQ(1, 1);
-//  EXPECT_TRUE(true);
-//}
-TEST(simple_construction_test, test_graph) {
+TEST(test_graph_functions, test_graph) {
   jas::algo::Graph<char> graph(1);
   auto& vertex = graph.AddVertex('a');
   EXPECT_FALSE(vertex.Visited());
 }
 
-TEST(simple_construction_test, test_simple_graph) {
+TEST(simple_construction_test, test_simple_graph) 
+{
   jas::algo::Graph<char> graph(3);
   auto& vertexA = graph.AddVertex('a');
   auto& vertexB = graph.AddVertex('b');
   auto& vertexC = graph.AddVertex('c');
   graph.AddEdge(vertexA, vertexB);
   graph.AddEdge(vertexA, vertexC);
-  EXPECT_TRUE(graph.GetAdjUnvisitedVertex(vertexA).is_initialized());
-  auto& vertexNext = graph.GetAdjUnvisitedVertex(vertexA).get().Type();
-  EXPECT_TRUE(vertexB.Type() ==vertexNext);
+  EXPECT_TRUE(graph.GetAdjUnvisitedVertex(vertexA) != -1);
 }
 
-TEST(simple_construction_test, test_graph_dfs) {
+TEST(simple_construction_test, test_graph_dfs) 
+{
 	jas::algo::Graph<char> graph(3);
 	auto& vertexA = graph.AddVertex('a');
 	auto& vertexB = graph.AddVertex('b');
@@ -38,39 +34,98 @@ TEST(simple_construction_test, test_graph_dfs) {
 	EXPECT_TRUE(vertexC.Type() == vertexNext2);
 }
 
-TEST(simple_construction_test, test_graph_bfs) {
+TEST(simple_construction_test, test_graph_dfs_traversal)
+{
 	jas::algo::Graph<char> graph(3);
 	auto& vertexA = graph.AddVertex('a');
 	auto& vertexB = graph.AddVertex('b');
 	auto& vertexC = graph.AddVertex('c');
-	auto& vertexD = graph.AddVertex('d');
-	auto& vertexE = graph.AddVertex('e');
-	auto& vertexF = graph.AddVertex('f');
-	auto& vertexG = graph.AddVertex('g');
-
 	graph.AddEdge(vertexA, vertexB);
 	graph.AddEdge(vertexA, vertexC);
-	graph.AddEdge(vertexB, vertexD);
-	graph.AddEdge(vertexB, vertexE);
-	graph.AddEdge(vertexB, vertexF);
-	graph.AddEdge(vertexB, vertexG);
+	EXPECT_NO_THROW(graph.DFS());
+}
+	
+TEST(simple_construction_test, test_graph_bfs_throws)
+{
+	auto vertices = { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+
+	jas::algo::Graph<char> graph(vertices.size());
+	std::vector<jas::algo::Vertex<char>> addedVertices;
+
+	for (auto&& vertex : vertices)
+	{
+		addedVertices.emplace_back(graph.AddVertex(vertex));
+	}
+
+	graph.AddEdge('a', 'b');
+	graph.AddEdge('a', 'c');
+	graph.AddEdge('b', 'd');
+	graph.AddEdge('b', 'e');
+	graph.AddEdge('b', 'f');
+	graph.AddEdge('b', 'g');
+
+	EXPECT_THROW(graph.BreadthFirstSearch('h'), std::runtime_error);
+}
+
+TEST(simple_construction_test, test_graph_bfs)
+{
+	auto vertices = { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+
+	jas::algo::Graph<char> graph(vertices.size());
+	std::vector<jas::algo::Vertex<char>> addedVertices;
+
+	for (auto&& vertex : vertices)
+	{
+		addedVertices.emplace_back(graph.AddVertex(vertex));
+	}
+
+	graph.AddEdge('a', 'b');
+	graph.AddEdge('a', 'c');
+	graph.AddEdge('b', 'd');
+	graph.AddEdge('b', 'e');
+	graph.AddEdge('b', 'f');
+	graph.AddEdge('b', 'g');
 
 	auto& vertexNext = graph.BreadthFirstSearch('a').Type();
-	EXPECT_TRUE(vertexA.Type() == vertexNext);
+	EXPECT_TRUE('a' == vertexNext);
+
 	auto& vertexNext1 = graph.BreadthFirstSearch('b').Type();
-	EXPECT_TRUE(vertexB.Type() == vertexNext1);
+	EXPECT_TRUE('b' == vertexNext1);
+
 	auto& vertexNext2 = graph.BreadthFirstSearch('c').Type();
-	EXPECT_TRUE(vertexC.Type() == vertexNext2);
+	EXPECT_TRUE('c' == vertexNext2);
 
 	auto& vertexNext3 = graph.BreadthFirstSearch('d').Type();
-	EXPECT_TRUE(vertexD.Type() == vertexNext3);
+	EXPECT_TRUE('d' == vertexNext3);
 
 	auto& vertexNext4 = graph.BreadthFirstSearch('e').Type();
-	EXPECT_TRUE(vertexE.Type() == vertexNext4);
+	EXPECT_TRUE('e' == vertexNext4);
 
 	auto& vertexNext5 = graph.BreadthFirstSearch('f').Type();
-	EXPECT_TRUE(vertexF.Type() == vertexNext5);
+	EXPECT_TRUE('f' == vertexNext5);
 
 	auto& vertexNext6 = graph.BreadthFirstSearch('g').Type();
-	EXPECT_TRUE(vertexG.Type() == vertexNext6);
+	EXPECT_TRUE('g' == vertexNext6);
+}
+
+TEST(simple_construction_test, test_graph_bfs_traversal)
+{
+	auto vertices = { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+
+	jas::algo::Graph<char> graph(vertices.size());
+	std::vector<jas::algo::Vertex<char>> addedVertices;
+
+	for (auto&& vertex : vertices)
+	{
+		addedVertices.emplace_back(graph.AddVertex(vertex));
+	}
+
+	graph.AddEdge('a', 'b');
+	graph.AddEdge('a', 'c');
+	graph.AddEdge('b', 'd');
+	graph.AddEdge('b', 'e');
+	graph.AddEdge('b', 'f');
+	graph.AddEdge('b', 'g');
+	
+	EXPECT_NO_THROW(graph.BFS());
 }
