@@ -7,7 +7,7 @@ TEST(test_graph_functions, test_graph) {
   EXPECT_FALSE(vertex.Visited());
 }
 
-TEST(simple_construction_test, test_simple_graph) 
+TEST(test_graph_functions, test_simple_graph) 
 {
   jas::algo::Graph<char> graph(3);
   auto& vertexA = graph.AddVertex('a');
@@ -18,7 +18,7 @@ TEST(simple_construction_test, test_simple_graph)
   EXPECT_TRUE(graph.GetAdjUnvisitedVertex(vertexA) != -1);
 }
 
-TEST(simple_construction_test, test_graph_dfs) 
+TEST(test_graph_functions, test_graph_dfs) 
 {
 	jas::algo::Graph<char> graph(3);
 	auto& vertexA = graph.AddVertex('a');
@@ -34,7 +34,7 @@ TEST(simple_construction_test, test_graph_dfs)
 	EXPECT_TRUE(vertexC.Type() == vertexNext2);
 }
 
-TEST(simple_construction_test, test_graph_dfs_traversal)
+TEST(test_graph_functions, test_graph_dfs_traversal)
 {
 	jas::algo::Graph<char> graph(3);
 	auto& vertexA = graph.AddVertex('a');
@@ -45,7 +45,7 @@ TEST(simple_construction_test, test_graph_dfs_traversal)
 	EXPECT_NO_THROW(graph.DFS());
 }
 	
-TEST(simple_construction_test, test_graph_bfs_throws)
+TEST(test_graph_functions, test_graph_bfs_throws)
 {
 	auto vertices = { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
 
@@ -67,7 +67,7 @@ TEST(simple_construction_test, test_graph_bfs_throws)
 	EXPECT_THROW(graph.BreadthFirstSearch('h'), std::runtime_error);
 }
 
-TEST(simple_construction_test, test_graph_bfs)
+TEST(test_graph_functions, test_graph_bfs)
 {
 	auto vertices = { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
 
@@ -108,7 +108,7 @@ TEST(simple_construction_test, test_graph_bfs)
 	EXPECT_TRUE('g' == vertexNext6);
 }
 
-TEST(simple_construction_test, test_graph_bfs_traversal)
+TEST(test_graph_functions, test_graph_bfs_traversal)
 {
 	auto vertices = { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
 

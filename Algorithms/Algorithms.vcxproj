@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="graph.hpp" />
     <ClInclude Include="SymbolTable.hpp" />
+    <ClInclude Include="weightedgraph.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

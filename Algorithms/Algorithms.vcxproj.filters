@@ -26,6 +26,9 @@
     <ClInclude Include="SymbolTable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="weightedgraph.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
