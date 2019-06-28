@@ -455,9 +455,10 @@ public:
 	explicit TopologicalSortImpl(std::vector<Vertex<T>> vertices, std::vector<std::vector<unsigned int>> adjMatrix);
 	detail::GraphTraversal<Vertex<T>> Sort();
 private:
-	int FindLeafNode(size_t size);
-	int DeleteVertex(size_t index);
+	int FindLeafNode();
+	void DeleteVertex(size_t index);
 	std::vector<Vertex<T>> vertices_;
+	int verticesSize_=0;
 	std::vector<std::vector<unsigned int>> adjMatrix_;
 };
 
@@ -466,16 +467,17 @@ TopologicalSortImpl<T>::TopologicalSortImpl(std::vector<Vertex<T>> vertices, std
 :vertices_(std::move(vertices))
 , adjMatrix_(std::move(adjMatrix))
 {
+	verticesSize_ = vertices_.size();
 }
 
 template<typename T>
-int TopologicalSortImpl<T>::FindLeafNode(size_t size)
+int TopologicalSortImpl<T>::FindLeafNode()
 {
 	//find the leaf node with no successor
-	for (int row = 0; row < size; ++row)
+	for (int row = 0; row < verticesSize_; ++row)
 	{
 		bool edge = false;
-		for (int col = 0; col < size; ++col)
+		for (int col = 0; col < verticesSize_; ++col)
 		{
 			//if it has a 1, i.e. an edge, then it is not a leaf node,
 			//exit and continue looking at the next leaf node
@@ -495,42 +497,41 @@ int TopologicalSortImpl<T>::FindLeafNode(size_t size)
 }
 
 template<typename T>
-int TopologicalSortImpl<T>::DeleteVertex(size_t index)
+void TopologicalSortImpl<T>::DeleteVertex(size_t index)
 {
 	//remove the value from vertices
-	auto verticesSize = vertices_.size()-1;
-	for (size_t i = index; i < verticesSize; ++i)
+	for (size_t i = index; i < verticesSize_-1; ++i)
 		vertices_[i] = vertices_[i + 1];
 
-	//move the column to left
-	for (size_t row = 0; row < verticesSize; ++row)
-	{
-		for (size_t col = index; col < verticesSize; ++col)
-		{
-			adjMatrix_[row][col] = adjMatrix_[row][col + 1];
-		}
-	}
-
 	//move the rows up
-	for (size_t col = index; col < verticesSize; ++col)
+	for (size_t row = index; row < verticesSize_-1; ++row)
 	{ 
-		for (size_t row = index; row < verticesSize; ++row)
+		for (size_t col = 0; col < verticesSize_; ++col)
 		{
 			adjMatrix_[row][col] = adjMatrix_[row+1][col];
 		}
 	}
-	return index - 1;
+
+	//move the column to left
+	for (size_t col = index; col < verticesSize_-1; ++col)
+	{
+		for (size_t row = 0; row < verticesSize_; ++row)
+		{
+			adjMatrix_[row][col] = adjMatrix_[row][col + 1];
+		}
+	}
+	--verticesSize_;
 }
 
 template<typename T>
 detail::GraphTraversal<Vertex<T>> TopologicalSortImpl<T>::Sort()
 {
-	int size = vertices_.size();
-	detail::GraphTraversal<Vertex<T>> graphTraversal(size);
-	while (size > 0)
+	verticesSize_ = vertices_.size();
+	detail::GraphTraversal<Vertex<T>> graphTraversal(verticesSize_);
+	while (verticesSize_ > 0)
 	{
 		//find the one with no successor
-		auto leafNode = FindLeafNode(size);
+		auto leafNode = FindLeafNode();
 		if (leafNode == -1)
 		{
 			//topological sort requires the graph to be DAG
@@ -538,11 +539,12 @@ detail::GraphTraversal<Vertex<T>> TopologicalSortImpl<T>::Sort()
 			throw std::runtime_error("the graph has no leaf node or has cycles; topological search is not possible!");
 		}
 		graphTraversal.PushFront(vertices_[leafNode]);
-		size = DeleteVertex(leafNode);
+		DeleteVertex(leafNode);
 	}
 	return graphTraversal;
 }
 }
+
 TEMPLATE
 detail::GraphTraversal<Vertex<T>> SCOPE::TopologicalSort()
 {
