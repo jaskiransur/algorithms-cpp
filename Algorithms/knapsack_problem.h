@@ -25,8 +25,8 @@ template<typename Item>
 struct SolveKnapSack
 {
 	SolveKnapSack(initializer_list<Item> items);
+	void AddItem(Item item);
 	typename Item::value_type SolveForWeight(typename Item::weight_type maxWeight);
-	void SolveForValue(typename Item::value_type maxValue);
 	vector<Item> items_;
 };
 #define TEMPLATE template<typename Item>
@@ -45,10 +45,6 @@ typename Item::value_type SCOPE::SolveForWeight(typename Item::weight_type maxWe
 	for (auto& row: grid)
 		row.resize(maxWeight);
 
-//	sort(items_.begin(), items_.end(),
-//		[](const Item& item1, const Item& item2) {return item1.value_< item2.value_; });
-
-	auto maxItemValue = items_[items_.size()-1];	
 	//rows
 	for (int row=0; row<grid.size(); ++row)
 	{ 
@@ -57,18 +53,23 @@ typename Item::value_type SCOPE::SolveForWeight(typename Item::weight_type maxWe
 		for (int col = 0; col < grid[row].size(); ++col)
 		{
 			auto weight = col+1;//current column is also weight
-			auto previousRowColValue = row>0? grid[row - 1][col]: 0;
+			auto previousRowColValue = row>0? grid[row - 1][col]: items_[row].value_;
 			auto leftoverWeightsValue = 0;
-			auto currentRowColValue = previousRowColValue;
-			if (row == 0)
-				currentRowColValue = items_[row].value_;
-			else if (weight >= items_[row].weight_)
+			auto currentRowColValue = 0;
+
+			if (row>0 && weight >= items_[row].weight_)
 			{
-				//leftover weight value is there if there was a weight difference between the current weight and item's weight
-				if (weight - items_[row].weight_>0)
-					leftoverWeightsValue = grid[row - 1][weight - items_[row].weight_];
-				//can we also fit the current item, that could be possible 'cause the current weight is more than item's weight
+				//we can fit the current item, that should be possible 
+				//'cause the current weight is more than item's weight
 				currentRowColValue = items_[row].value_;
+
+				//for leftover weight value [weight- items_[row].value_] 
+				//get the item from grid table 
+				//( we need to take into account an increase in weight's value by 1 i.e. weight = col+1
+				//by decreasing it by 1 to point to 0 index based column
+				leftoverWeightsValue = 
+					weight-items_[row].weight_>0?
+					grid[row - 1][(weight - items_[row].weight_)-1]:0;
 			}
 			grid[row][col] = max(previousRowColValue, leftoverWeightsValue + currentRowColValue);
 		}
@@ -81,9 +82,9 @@ typename Item::value_type SCOPE::SolveForWeight(typename Item::weight_type maxWe
 }
 
 TEMPLATE 
-void SCOPE::SolveForValue(typename Item::value_type maxValue)
+void SCOPE::AddItem(Item item)
 {
-
+	items_.push_back(std::move(item));
 }
 #undef TEMPLATE 
 #undef SCOPE 
