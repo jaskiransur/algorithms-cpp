@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\graphs">
+      <UniqueIdentifier>{4f2cf865-13f5-479e-b3a1-ea9ccc079756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dynamic_programming">
+      <UniqueIdentifier>{29e3a963-190a-473c-b8a2-4a627dbe0508}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Algorithms.cpp">
@@ -20,14 +26,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="graph.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SymbolTable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="graph.hpp">
+      <Filter>Header Files\graphs</Filter>
+    </ClInclude>
     <ClInclude Include="weightedgraph.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\graphs</Filter>
+    </ClInclude>
+    <ClInclude Include="knapsack_problem.h">
+      <Filter>Source Files\dynamic_programming</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,12 +5,10 @@
 #include <boost/optional.hpp>
 #include <boost/format.hpp>
 #include <queue>
-#include <stack>
-#include <vector>
 
-namespace jas { namespace algo {
+namespace jas{ namespace algo {
+
 namespace detail {
-	
 	template<typename T>
 	struct ResetVisits
 	{
@@ -26,7 +24,7 @@ namespace detail {
 		}
 		std::vector<T>& vertices_;
 	};
-	
+
 	template<typename T>
 	struct WeightedGraphTraversal
 	{
@@ -45,20 +43,27 @@ namespace detail {
 	};
 }
 
+struct Edge
+{
+	int srcVert_=0;
+	int destVert_=0;
+	int weight_=0;
+};
+
 template<class T>
 class Vertex
 {
 public:
 	Vertex(T type);
 	bool& Visited();
-	const bool& Visited() const;
-	void Visit(bool state = true);
+	const bool& InTree() const;
+	void InTree(bool state = true);
 	T& Type();
 	const T& Type() const;
 	bool operator==(const Vertex<T>& other);
 private:
 	T type_;
-	bool visited_ = false;
+	bool inTree_ = false;
 };
 
 template<class T>
@@ -68,21 +73,15 @@ inline Vertex<T>::Vertex(T type)
 }
 
 template<class T>
-inline bool & Vertex<T>::Visited()
+inline const bool & Vertex<T>::InTree() const
 {
-	return visited_;
+	return inTree_;
 }
 
 template<class T>
-inline const bool & Vertex<T>::Visited() const
+inline void Vertex<T>::InTree(bool state)
 {
-	return visited_;
-}
-
-template<class T>
-inline void Vertex<T>::Visit(bool state)
-{
-	visited_ = state;
+	inTree_ = state;
 }
 
 template<class T>
@@ -111,19 +110,22 @@ public:
 	WeightedGraph(size_t vertices);
 	Vertex<T>& AddVertex(T type);
 
-	void AddEdge(const Vertex<T>& first, const Vertex<T>& second);
-	void AddEdge(const T& first, const T& second);
+	void AddEdge(const Vertex<T>& first, const Vertex<T>& second, int weight);
+	void AddEdge(const T& first, const T& second, int weight);
 
 	//minimum spanning tree weighted
 	detail::WeightedGraphTraversal<Vertex<T>> MSTW(T startingVertex);
 
-	int FindLeafNode();
-	int GetAdjUnvisitedVertex(Vertex<T>& vertex);
-
 private:
-	const size_t verticesSize_;	
+	void PutInPQ(int vertexIndex, int weight);
+	const size_t verticesSize_; //total supported vertices
 	std::vector<Vertex<T>> vertices_;
 	std::vector<std::vector<unsigned int>> adjMatrix_;
+	auto cmp = [](Edge left, Edge right) { return left.weight_ < right.weight_; };
+	std::priority_queue<Edge, std::vector<Edge>, decltype(cmp)> prQueue_;
+	int nVerts_=0; //number of vertices
+	int currentVert_=0; //current vertices
+	int verticesInTree_=0; //vertices in tree
 };
 
 #define TEMPLATE template<class T, bool directed>
@@ -140,7 +142,7 @@ inline SCOPE::WeightedGraph(size_t verticesSize)
 		adjMatrix_[i].resize(verticesSize_);
 		for (size_t j = 0; j < verticesSize_; j++)
 		{
-			adjMatrix_[i][j] = 0;
+			adjMatrix_[i][j] = std::numeric_limits<int>::infinity();
 		}
 	}
 }
@@ -155,103 +157,65 @@ inline Vertex<T>& SCOPE::AddVertex(T type)
 }
 
 TEMPLATE
-inline void SCOPE::AddEdge(const T& first, const T& second)
+inline void SCOPE::AddEdge(const T& first, const T& second, int weight)
 {
 	auto index1 = std::distance(vertices_.begin(), std::find_if(vertices_.begin(), vertices_.end(),
-		[first](const Vertex<T>& vertex) {return vertex.Type() == first;}));
-	auto index2 = std::distance(vertices_.begin(), std::find_if(vertices_.begin(), vertices_.end(), 
-		[second](const Vertex<T>& vertex) {return vertex.Type() == second;}));
-	
-	adjMatrix_[index1][index2] = 1;
+		[first](const Vertex<T>& vertex) {return vertex.Type() == first; }));
+	auto index2 = std::distance(vertices_.begin(), std::find_if(vertices_.begin(), vertices_.end(),
+		[second](const Vertex<T>& vertex) {return vertex.Type() == second; }));
+
+	adjMatrix_[index1][index2] = weight;
 	if (!directed)
-		adjMatrix_[index2][index1] = 1;
+		adjMatrix_[index2][index1] = weight;
 }
 
 TEMPLATE
-inline void SCOPE::AddEdge(const Vertex<T>& first, const Vertex<T>& second)
+inline void SCOPE::AddEdge(const Vertex<T>& first, const Vertex<T>& second, int weight)
 {
 	auto index1 = std::distance(vertices_.begin(), std::find(vertices_.begin(), vertices_.end(), first));
 	auto index2 = std::distance(vertices_.begin(), std::find(vertices_.begin(), vertices_.end(), second));
-	
-	adjMatrix_[index1][index2] = 1;
+
+	adjMatrix_[index1][index2] = weight;
 
 	if (!directed)
-		adjMatrix_[index2][index1] = 1;
+		adjMatrix_[index2][index1] = weight;
 }
 
 TEMPLATE
-inline Vertex<T>& SCOPE::FindVertex(T type)
+inline void SCOPE::PutInPQ(int vertexIndex, int weight)
 {
-	auto index = std::distance(vertices_.begin(), std::find(vertices_.begin(), vertices_.end(), type));
-	return vertices_[index];
+	prQueue_.
 }
 
 TEMPLATE
-inline int SCOPE::GetAdjUnvisitedVertex(Vertex<T>& vertex)
+inline detail::WeightedGraphTraversal<Vertex<T>> SCOPE::MSTW(T startingVertex)
 {
-	size_t index = std::distance(vertices_.begin(), std::find(vertices_.begin(), vertices_.end(), vertex));
-	for (size_t i = 0; i < adjMatrix_[index].size(); i++)
+	detail::WeightedGraphTraversal<Vertex<T>> weightedGraphTraversal;
+	currentVert_ = 0;
+	while (verticesInTree_ < nVerts_ - 1)
 	{
-		if (adjMatrix_[index][i] == 1 && !vertices_[i].Visited())
+		vertices_[currentVert_].InTree(true);
+		verticesInTree_++;
+		for (int j = 0; j < nVerts_; ++j)
 		{
-			return i;
+			if (j == currentVert_ || vertices_[j].InTree())
+				continue;
+			int weight = adjMatrix_[currentVert_][j]; //get weight
+			if (std::isinf<int>(weight))//has no edge
+				continue;
+			//put in queue
+			PutInPQ(j, weight);
 		}
+		//check pr queue has elements in it
+		if (prQueue_.empty())
+			throw std::runtime_error("priority queue is empty; graph is not connected");
+		Edge edge = prQueue_.top();
+		weightedGraphTraversal.Push(vertices_[edge.srcVert_]);
+		weightedGraphTraversal.Push(vertices_[edge.destVert_]);
+		prQueue_.pop();
 	}
-	return -1;
-}
-
-TEMPLATE
-inline detail::WeightedGraphTraversal<Vertex<T>> SCOPE::MSTW(T startingVertex) 
-{
-	//raii to reset the visits back to not visited
-	detail::ResetVisits<Vertex<T>> resetVisits(vertices_);
-
-	detail::WeightedGraphTraversal<Vertex<T>> graphTraversal;
-
-	std::stack<Vertex<T>> dfsStack;
-	auto& start = FindVertex(startingVertex);
-	start.Visit();
-	dfsStack.push(start);
-	graphTraversal.Push(start);
-
-	while (!dfsStack.empty())
-	{
-		int adjacentVertex = GetAdjUnvisitedVertex(dfsStack.top());
-		if (adjacentVertex == -1)
-		{ 
-			dfsStack.pop();
-		}
-		else
-		{
-			graphTraversal.Push(vertices_[adjacentVertex]);
-			vertices_[adjacentVertex].Visit();
-			dfsStack.push(vertices_[adjacentVertex]);
-		}
-	}
-	return graphTraversal;
-}
-
-TEMPLATE
-int SCOPE::FindLeafNode()
-{
-	for (int row = 0; row < vertices_.size(); ++row)
-	{
-		bool edge = false;
-		for (int col = 0; col < adjMatrix_[row].size(); ++col)
-		{
-			if (adjMatrix_[row][col] == 1)
-			{
-				edge = true;
-				break;
-			}
-		}
-		if (edge == false)
-			return row;
-	}
-	return -1;
 }
 #undef TEMPLATE
 #undef SCOPE
-
 }}
 #endif//jas_algo_weighted_graph_hpp

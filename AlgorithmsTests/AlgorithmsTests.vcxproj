@@ -34,6 +34,7 @@
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
     <ClCompile Include="test_directed_graph.cpp" />
+    <ClCompile Include="test_dynamic_programming.cpp" />
     <ClCompile Include="test_graph.cpp" />
     <ClCompile Include="test_graph_applications.cpp" />
   </ItemGroup>

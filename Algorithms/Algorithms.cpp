@@ -1,4 +1,8 @@
 #include "graph.hpp"
+#include "knapsack_problem.h"
 
-jas::algo::Graph<char> CharGraph(3);
-jas::algo::Graph<char, true> DirectedCharGraph(3);
+template jas::algo::Graph<char>;
+template jas::algo::Graph<char, true>;
+template jas::algo::Item<int, int>;
+typedef jas::algo::Item<int, int> Item1;
+template jas::algo::SolveKnapSack<Item1>;

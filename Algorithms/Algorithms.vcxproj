@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph.hpp" />
+    <ClInclude Include="knapsack_problem.h" />
     <ClInclude Include="SymbolTable.hpp" />
     <ClInclude Include="weightedgraph.hpp" />
   </ItemGroup>
