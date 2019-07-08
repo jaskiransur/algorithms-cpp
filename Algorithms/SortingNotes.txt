@@ -1,0 +1,38 @@
+sorting
+-comparisons
+-swaps for arranging them in order (ascending)
+-adaptive, doesn't try to sort, if an array is already sorted
+-stable: if two duplicate items maintain their original order
+
+Bubble sort
+
+The name comes from a stone thrown in water, where heavier element is thrown in and the lighter elements comes up like a bubble
+
+1st pass
+8<- 5 	5 	5	5
+5 	8<-	7	7	7
+7 	7	8<-	3	3
+3 	3	3	8<-	2
+2 	2	2	2	8<- // the largest is at the end
+
+1st pass; run through all the elements and swap if they are not in order
+-comaprisons= n-1; swaps = n-1
+output of 1st pass: the largest element is in the end
+
+2nd pass: run through all the elements and swap if they are not in order
+2nd largest element is moved to the 2nd last position
+Since the last element was already sorted, their is no need to compare and swap the last elements
+
+with each pass afterwords, the number of compares and swap decrease by one.
+in each step, the larger value in moved down, and the smaller moves up
+the end result of each pass is to move the largest value in the non-sorted group to move down and make it the minimum (just above the previous sorted list) in sorted list
+
+number of swaps/comaprisons= n+n-1+n-2......1 i.e. sum of n natural numbers = n(n-1)/2 = O(n2)
+
+
+Best case: O(n); if the list is already sorted
+Worst case: O(n2); if the lst is in descending order or max is at 1st and min is the last. 
+i.e. every element has to be moved
+Bubble sort is not guranteed to be adaptive, 
+i.e. it is adaptive, if the list is already sorted then no swaps are performed 
+and the function quits without performing any swapping operation

@@ -19,6 +19,12 @@
     <Filter Include="Source Files\dynamic_programming">
       <UniqueIdentifier>{29e3a963-190a-473c-b8a2-4a627dbe0508}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\BinaryTree">
+      <UniqueIdentifier>{ab1d9c76-5e04-47e0-85ff-0764137ab8c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sorting">
+      <UniqueIdentifier>{f80a075c-8352-44a2-bcb3-74e24219918f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Algorithms.cpp">
@@ -38,8 +44,15 @@
     <ClInclude Include="knapsack_problem.h">
       <Filter>Source Files\dynamic_programming</Filter>
     </ClInclude>
+    <ClInclude Include="BinaryTree.hpp">
+      <Filter>Header Files\BinaryTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BubbleSort.hpp">
+      <Filter>Header Files\Sorting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include=".clang-format" />
   </ItemGroup>
 </Project>

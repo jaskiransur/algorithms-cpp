@@ -150,12 +150,15 @@
     <ClCompile Include="Algorithms.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BinaryTree.hpp" />
+    <ClInclude Include="BubbleSort.hpp" />
     <ClInclude Include="graph.hpp" />
     <ClInclude Include="knapsack_problem.h" />
     <ClInclude Include="SymbolTable.hpp" />
     <ClInclude Include="weightedgraph.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".clang-format" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
